@@ -5,6 +5,16 @@ struct solucion {
 	int indice;
 	int suma;
 };
+/*
+int bucle(char A[], char B[],){
+	for(int i = 0; i < 1000000; i++){
+		m = rand()%(n) + 1;	// Genera un valor de m entre 1 y n.
+		n = 1000000;
+		generadorCasos(A,B,n);
+		
+	}
+}*/
+
 
 void generadorCasos(char A[], char B[], int n){
 	for(int i = 0; i < n; i++){
@@ -13,19 +23,19 @@ void generadorCasos(char A[], char B[], int n){
 	}
 }
 
+
 solucion resolucionDirecta(char A[], char B[], int inicio, int fin, int m) {
 	solucion aux;
 	aux.indice = inicio;
 	aux.suma = 0;
 	
-	int fin1 = inicio + m <= fin ? inicio + m : fin; // Evitar que salga del rango
+	int fin1 = inicio + m < fin ? inicio + m : fin; // Evitar que salga del . < o <=    ¿?
 	for(int i = inicio; i < fin1; i++)	
 		aux.suma += abs(A[i]-B[i]);
 			 
 	solucion s = aux;
-	for(int i = inicio + m; i <= fin; i++){
-		aux.suma = aux.suma-(abs(A[aux.indice]-B[aux.indice]))+ abs(A[i]-B[i]);
-		aux.indice++;
+	for(int i = inicio + m; i < fin; i++){
+		aux.suma = aux.suma-(abs(A[i-m]-B[i-m]))+ abs(A[i]-B[i]);
 		if(aux.suma > s.suma){
 			s.suma = aux.suma;
 			s.indice = aux.indice;
@@ -43,7 +53,7 @@ solucion combinar(char A[], char B[], solucion p1, solucion p2, int inicio, int 
 	}
 	
 	solucion s;
-	if(fin - inicio + 1 <= m){
+	if(fin - inicio <= m){
 		s.indice = p1.indice;
 		s.suma = p1.suma + p2.suma;		
 	}
@@ -70,7 +80,7 @@ solucion dyv(char A[], char B[], int inicio, int fin, int m) {
 	
 	int medio = (inicio + fin) / 2;
 	solucion p1 = dyv(A,B,inicio, medio, m);
-	solucion p2 = dyv(A,B,medio+1, fin, m);	
+	solucion p2 = dyv(A,B,medio, fin, m);	
 	
 	return combinar(A,B,p1,p2,inicio,fin,medio,m);
 }
@@ -78,12 +88,14 @@ solucion dyv(char A[], char B[], int inicio, int fin, int m) {
 int main() {
 	srand(time(NULL));
 	// Establecemos el tamaño de la n y m de forma temporal a través de la terminal.
-	int n, m;
-	cin >> n >> m;
+	int n,m;
 	
+	cin >> n >> m;
 	//n = rand()%(1000000-100)+100; //-> Rango entre 10⁶ - 10² -> tamaño de la n
 	//m = rand()%(n) + 1;	// Genera un valor de m entre 1 y n.
 	
+//	char A[n] = {'x','u','n','p','h','o','d','s','i','o','o','e','n','e','d','i','d','r','n','u','s','z','c','x', 'e','f','l','i','i','r'};
+//	char B[n] = {'q','n','g','b','l','f','s','z','l','s','x','n','z','t','n','c','f','s','h','u','i','y','t','k', 'n','s','j','y','m','n'};
 	char A[n], B[n];
 	generadorCasos(A,B,n);
 	
@@ -99,11 +111,15 @@ int main() {
 	cout << "dif: ";
 	for(int i = 0; i < n; i++) cout << abs(A[i]-B[i]) << " ";
 	cout << endl;
-	
+
 	//solucion s = resolucionDirecta(0,n-1,m);
 	//cout << s.indice << " " << s.suma << endl;
-	solucion s = dyv(A,B,0, n-1, m);
-	cout << "indice: " << s.indice << " suma: " << s.suma << "\n";
+	if(m>0) {
+		solucion s = dyv(A,B,0, n, m);
+		cout << "indice: " << s.indice + 1 << " suma: " << s.suma << "\n";
+	} else {
+		cout << "indice: 0 suma: 0\n";
+	}
 	
 	
 }
